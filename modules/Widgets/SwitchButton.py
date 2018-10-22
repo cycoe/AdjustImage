@@ -5,8 +5,8 @@ import threading
 
 class SwitchButton(QPushButton):
 
-    def __init__(self, posText=None, negText=None):
-        super(SwitchButton, self).__init__(posText)
+    def __init__(self, parent=None, posText=None, negText=None):
+        super(SwitchButton, self).__init__(posText, parent)
         # 当前状态
         self.status = True
         # 切换信号
@@ -27,7 +27,7 @@ class SwitchButton(QPushButton):
         # 按键状态检查周期
         self.period = 0.1
         # 初始化按键状态为正向
-        self.setPos()
+        self.setStatus(True)
         # 绑定点击事件
         self.clicked.connect(self._clicked)
 
@@ -57,16 +57,13 @@ class SwitchButton(QPushButton):
         self.period = period
 
     @pyqtSlot()
-    def setPos(self):
-        self.setText(self.posText)
-        self.signal = True
-        self.setEnabled(True)
-
-    @pyqtSlot()
-    def setNeg(self):
-        self.setText(self.negText)
-        self.signal = False
-        self.setEnabled(True)
+    def setStatus(self, status):
+        if status:
+            self.setText(self.posText)
+        else:
+            self.setText(self.negText)
+        self.signal = status
+        self.setEnabled(status)
 
     @pyqtSlot()
     def _clicked(self):
