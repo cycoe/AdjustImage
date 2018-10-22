@@ -47,9 +47,9 @@ class MyImage(object):
         else:
             # cover_obj = cover_obj.resize((int(new_height * ratio_ori), new_height))
             img_obj.paste(cover_obj, ((new_width - img_width) // 2, 0))
-        img_path_ = self.img_path.split(os.sep)
+        img_path_ = self.img_path.split('/')
         img_path_[-1] = 'c_' + img_path_[-1]
-        img_obj.save(os.sep.join(img_path_), quality=100)
+        img_obj.save('/'.join(img_path_), quality=100)
 
 class BlurFilter(ImageFilter.Filter):
 
