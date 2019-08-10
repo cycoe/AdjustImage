@@ -4,7 +4,13 @@
 
 import os
 import math
+import numpy as np
 from PIL import Image, ImageFilter
+
+
+FADE_FACTOR = np.linspace(0, 1, 100, endpoint=True)
+FADE_FACTOR_REVERSE = np.linspace(1, 0, 100, endpoint=True)
+
 
 class MyImage(object):
 
@@ -17,39 +23,62 @@ class MyImage(object):
         img_height = img_obj.size[1]
         ratio = width / height
         ratio_ori = img_width / img_height
+
+        if ratio_ori == ratio:
+            img_obj.resize((width, height))
+            self._save(img_obj)
+            return
+
         if ratio_ori > ratio:
-            new_width = int(ratio * img_height)
-            new_height = img_height
-            x_1 = (img_width - new_width) // 2
+            crop_width = int(ratio * img_height)
+            crop_height = img_height
+            x_1 = (img_width - crop_width) // 2
             y_1 = 0
-            x_2 = x_1 + new_width
+            x_2 = x_1 + crop_width
             y_2 = img_height
-            new_height = int(img_width / new_width * img_height)
-            new_width = img_width
         else:
-            new_width = img_width
-            new_height = int(img_width / ratio)
+            crop_width = img_width
+            crop_height = int(img_width / ratio)
             x_1 = 0
-            y_1 = (img_height - new_height) // 2
+            y_1 = (img_height - crop_height) // 2
             x_2 = img_width
-            y_2 = y_1 + new_height
-            new_width = int(img_height / new_height * img_width)
-            new_height = img_height
+            y_2 = y_1 + crop_height
         img_obj = img_obj.crop((x_1, y_1, x_2, y_2))
-        img_obj = img_obj.resize((new_width, new_height), Image.ANTIALIAS)
+        img_obj = img_obj.resize((width, height), Image.ANTIALIAS)
         img_obj = img_obj.filter(BlurFilter(radius=radius))
 
+        # add cover
         cover_obj = Image.open(self.img_path)
-
         if ratio_ori > ratio:
-            # cover_obj = cover_obj.resize((new_width, int(new_width / ratio_ori)))
-            img_obj.paste(cover_obj, (0, (new_height - img_height) // 2))
+            cover_obj = cover_obj.resize(width, int(width / ratio_ori))
         else:
-            # cover_obj = cover_obj.resize((int(new_height * ratio_ori), new_height))
-            img_obj.paste(cover_obj, ((new_width - img_width) // 2, 0))
+            cover_obj = cover_obj.resize((int(height * ratio_ori), height))
+        mask = np.ones((cover_obj.size[1], cover_obj.size[0])) * 255
+        fadeLen = len(FADE_FACTOR)
+
+        # mask
+        if ratio_ori > ratio:
+            mask = mask.T
+        mask[:, :fadeLen] = mask[:, :fadeLen] * FADE_FACTOR
+        mask[:, -fadeLen:] = mask[:, -fadeLen:] * FADE_FACTOR_REVERSE
+        # 此将数组转成 np.uint8 非常重要，否则无法将数组转成合格的图片
+        mask = mask.astype(np.uint8)
+        if ratio_ori > ratio:
+            mask = mask.T
+
+        cover_blur_obj = cover_obj.filter(BlurFilter(radius=radius))
+        cover_blur_obj.paste(cover_blur_obj, (0, 0), mask=Image.fromarray(mask))
+        if ratio_ori > ratio:
+            img_obj.paste(cover_blur_obj, (0, (height - int(width / ratio_ori)) // 2), mask=Image.fromarray(mask))
+        else:
+            img_obj.paste(cover_obj, ((width - int(height * ratio_ori)) // 2, 0), mask=Image.fromarray(mask))
+        self._save(img_obj)
+
+    def _save(self, img_obj):
         img_path_ = self.img_path.split('/')
         img_path_[-1] = 'c_' + img_path_[-1]
-        img_obj.save('/'.join(img_path_), quality=100)
+        img_obj.save('/'.join(img_path_).replace('.jpg', '.png'), quality=100)
+
 
 class BlurFilter(ImageFilter.Filter):
 

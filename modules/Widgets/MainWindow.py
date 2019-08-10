@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
             self,
             '请选择需要处理的图片',
             os.path.expandvars('$HOME'),
-            "Image Files (*.jpg)"
+            "Image Files (*.jpg *.png)"
         )
         self.imgListWidget.clear()
         self.imgListWidget.addItems(self.fileNames)
