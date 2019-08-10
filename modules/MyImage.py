@@ -49,22 +49,23 @@ class MyImage(object):
 
         # add cover
         cover_obj = Image.open(self.img_path)
+        cover_obj = cover_obj.convert('RGBA')
         if ratio_ori > ratio:
             cover_obj = cover_obj.resize(width, int(width / ratio_ori))
         else:
             cover_obj = cover_obj.resize((int(height * ratio_ori), height))
-        mask = np.ones((cover_obj.size[1], cover_obj.size[0])) * 255
+        mask = np.array(np.asarray(cover_obj.split()[3]))
         fadeLen = len(FADE_FACTOR)
 
         # mask
-        if ratio_ori > ratio:
-            mask = mask.T
         mask[:, :fadeLen] = mask[:, :fadeLen] * FADE_FACTOR
         mask[:, -fadeLen:] = mask[:, -fadeLen:] * FADE_FACTOR_REVERSE
+        mask = mask.T
+        mask[:, :fadeLen] = mask[:, :fadeLen] * FADE_FACTOR
+        mask[:, -fadeLen:] = mask[:, -fadeLen:] * FADE_FACTOR_REVERSE
+        mask = mask.T
         # 此将数组转成 np.uint8 非常重要，否则无法将数组转成合格的图片
         mask = mask.astype(np.uint8)
-        if ratio_ori > ratio:
-            mask = mask.T
 
         cover_blur_obj = cover_obj.filter(BlurFilter(radius=radius))
         cover_blur_obj.paste(cover_blur_obj, (0, 0), mask=Image.fromarray(mask))
