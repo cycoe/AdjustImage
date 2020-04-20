@@ -1,5 +1,5 @@
-## Adjust Images
-Adjust Images 是一个通过为图片添加高斯模糊背景，将各种比例的图片转成统一分辨率的
+## W.G.B.
+W.G.B. (Wallpaper with Gaussian Blur) 是一个通过为图片添加高斯模糊背景，将各种比例的图片转成统一分辨率的
 工具。
 
 方便用于：

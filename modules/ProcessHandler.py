@@ -1,6 +1,8 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QObject
-from modules.MyImage import MyImage
 import pdb
+
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+
+from modules.MyImage import MyImage
 
 
 class ProcessHandler(QObject):
@@ -14,7 +16,9 @@ class ProcessHandler(QObject):
 
     def setImagePath(self, imagePathes):
         self._imagePathes = imagePathes
-        self._imageLists = [MyImage(imagePath) for imagePath in self._imagePathes]
+        self._imageLists = [
+            MyImage(imagePath) for imagePath in self._imagePathes
+        ]
         # 已完成的进程数
         self._finishedCount = 0
         # 已开始运行的进程数
@@ -45,7 +49,9 @@ class ProcessHandler(QObject):
     def _update(self):
         self._finishedCount += 1
         self._currentCount -= 1
-        self.updateSignal.emit(int(self._finishedCount / self._taskCount * 100))
+        self.updateSignal.emit(
+            int(self._finishedCount / self._taskCount * 100)
+        )
 
         if self._currentCount == 0:
             self.finishSignal.emit()

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import math
+import os
+
 import numpy as np
 from PIL import Image, ImageFilter
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -31,7 +32,9 @@ class MyImage(QThread):
             self.messageSignal.emit('浸入深度过大，已被重设为 {}'.format(self._depth))
         if self._depth != 0:
             self._kernel = fade(np.arange(0, self._depth, 1), self._depth)
-            self._kernelR = fade(np.arange(self._depth - 1, -1, -1), self._depth)
+            self._kernelR = fade(
+                np.arange(self._depth - 1, -1, -1), self._depth
+            )
         return self
 
     def run(self):

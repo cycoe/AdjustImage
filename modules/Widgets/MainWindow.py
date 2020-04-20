@@ -1,9 +1,11 @@
 import os
+
 from PyQt5.Qt import QIntValidator, QRegExp, QRegExpValidator
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtCore import pyqtSlot
-from modules.Widgets.Ui_mainWindow import Ui_mainWindow
+from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
+
 from modules.ProcessHandler import ProcessHandler
+from modules.Widgets.Ui_mainWindow import Ui_mainWindow
 
 
 class MainWindow(QMainWindow, Ui_mainWindow):
@@ -31,21 +33,6 @@ class MainWindow(QMainWindow, Ui_mainWindow):
         self.spinDepth.setValue(100)
         self.spinRadius.setValue(10)
         self.spinThreads.setValue(4)
-        # self.spinWidth.setToolTip('此处输入需要的图片宽度（范围：1-10000）')
-        # self.spinHeight.setToolTip('此处输入需要的图片高度（范围：1-10000）')
-        # self.spinDepth.setToolTip('此处输入照片与背景的浸入深度（范围：1-500）')
-        # self.spinRadius.setToolTip('此处输入高斯模糊的模糊半径（范围：1-100）')
-        # self.spinThreads.setToolTip('此处输入运行的线程数（范围：1-10）')
-        # sizeValidator = QRegExpValidator(QRegExp('^[1-9]\\d{2,3}$'), self)
-        # depthValidator = QRegExpValidator(QRegExp('^[0-4]?\\d{1,2}$'), self)
-        # radiusValidator = QRegExpValidator(QRegExp('^\\d{1,2}$'), self)
-        # threadsValidator = QRegExpValidator(QRegExp('^[1-9]$'), self)
-        # self.spinWidth.setValidator(sizeValidator)
-        # self.spinHeight.setValidator(sizeValidator)
-        # self.spinDepth.setValidator(depthValidator)
-        # self.spinRadius.setValidator(radiusValidator)
-        # self.spinThreads.setValidator(threadsValidator)
-
         self.progressBar.setValue(0)
 
     def _setConnect(self):
